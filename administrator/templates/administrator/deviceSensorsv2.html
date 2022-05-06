@@ -1,0 +1,294 @@
+{% extends 'administrator/baseTemplate.html' %}
+{% load static %}
+{% block header %}Sensors Data {% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-battery-three-quarters"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Device Battery</span>
+                <span class="info-box-number">
+                    {{lastData.battery}}
+                    <small>%</small>
+                </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thermometer-three-quarters"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Temperature</span>
+                <span class="info-box-number">{{lastData.temperature}}</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+
+    <!-- fix for small devices only -->
+    <div class="clearfix hidden-md-up"></div>
+
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-fire-alt"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Energy Consumption</span>
+                <span class="info-box-number">{{lastData.energyConsumption}}<small>%</small></span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="info-box mb-3">
+            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-water"></i></span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Water Level</span>
+                <span class="info-box-number">{{lastData.waterLevel}}</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+    <!-- /.col -->
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">PPM</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <div id="ppmChart" class="chartsDiv" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">PH Level</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="phLevel" class="chartsDiv" style="height: 250px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-danger">
+            <div class="card-header">
+                <h3 class="card-title">Water Temperature</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="waterTemp" class="chartsDiv" style="height: 250px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">Atmospheric Temperature</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <div id="temp" class="chartsDiv" style="height: 250px;"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title">Humidity</h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <div id="humidity" class="chartsDiv" style="height: 250px;"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-success">
+            <div class="card-header">
+                <h3 class="card-title">Energy Consumption </h3>
+
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <div id="energyConsumption" class="chartsDiv" style="height: 250px;"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">Water Level</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="chart">
+                    <div id="waterLevel" class="chartsDiv" style="height: 250px;"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block extraScripts %}
+
+<!-- Page specific script -->
+<script>
+    $(document).ready(function () {
+        loadCharts();
+    });
+    function loadCharts() {
+        fetch('/sensorData/1/15?format=json')
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                Morris.Line({
+                    element: 'ppmChart',
+                    data: data,
+                    xkey: ['timeStamp'],
+                    ykeys: ['ppm'],
+                    labels: ['PPM'],
+                    parseTime: false
+                });
+                Morris.Line({
+                    element: 'waterTemp',
+                    data: data,
+                    xkey: ['timeStamp'],
+                    ykeys: ['waterTemp'],
+                    labels: ['Water Temperature'],
+                    parseTime: false
+                });
+                Morris.Line({
+                    element: 'phLevel',
+                    data: data,
+                    xkey: ['timeStamp'],
+                    ykeys: ['ph'],
+                    labels: ['PH Level'],
+                    parseTime: false
+                });
+                Morris.Line({
+                    element: 'temp',
+                    data: data,
+                    xkey: ['timeStamp'],
+                    ykeys: ['temperature'],
+                    labels: ['Atmospheric Temperature'],
+                    parseTime: false
+                });
+                Morris.Line({
+                    element: 'humidity',
+                    data: data,
+                    xkey: ['timeStamp'],
+                    ykeys: ['humidity'],
+                    labels: ['Humidity'],
+                    parseTime: false
+                });
+                Morris.Line({
+                    element: 'energyConsumption',
+                    data: data,
+                    xkey: ['timeStamp'],
+                    ykeys: ['energyConsumption'],
+                    labels: ['Energy Consumption'],
+                    parseTime: false
+                });
+                Morris.Line({
+                    element: 'waterLevel',
+                    data: data,
+                    xkey: ['timeStamp'],
+                    ykeys: ['waterLevel'],
+                    labels: ['Water Level'],
+                    parseTime: false
+                });
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    }
+    setInterval(function () {
+        document.querySelectorAll('.chartsDiv').forEach(function (item) {
+            $(item).empty();
+        });
+        loadCharts();
+    }, 30000);
+
+</script>
+{% endblock %}

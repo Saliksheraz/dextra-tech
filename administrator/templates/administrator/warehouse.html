@@ -1,0 +1,57 @@
+{% extends 'administrator/baseTemplate.html' %}
+{% block navbar %}
+    <li class="breadcrumb-item">Add Device</li>
+{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <form method="POST" id="newDeviceForm" class="contact-form"
+                      enctype='multipart/form-data'>{% csrf_token %}
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="name">WareHouse Name
+                                    <input class="form-control" value="" name="name" id="id_name"
+                                           required
+                                           type="text" size="40" maxlength="50">
+                                </label>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label for="key">WareHouse ID<input class="form-control" name="warehouseId" id="id_warehouseId"
+                                                           required value="1234"
+                                                           type="text" size="40" maxlength="16">
+                                </label>
+                            </div>
+                            <div class="col-md-4" style="margin-top:20px">
+                                <label for="key">
+                                    Image
+                                    {{ form.picture }}
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="border-top">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-primary" onclick="verify();">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function verify() {
+            var name = $('#id_name').val();
+            var WareHouseId = $('#id_warehouseId').val();
+            if (name && WareHouseId) {
+            $('#newDeviceForm').submit();
+            } else {
+                alert("Please Fill the Form !!!")
+            }
+        }
+    </script>
+{% endblock %}

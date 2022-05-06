@@ -1,0 +1,55 @@
+    date = datetime.datetime.today()
+    for eachDevice in allDevices:
+        sensorDatalist = sensorData.objects.filter(device=eachDevice)
+        for eachsensors in sensorDatalist:
+            eachsensors.delete()
+    for eachDevice in allDevices:
+        randomHex = str(hex(random.randint(5555555555555555555, 8888888888888888888)))[2:]
+        eachDevice.key = randomHex
+        eachDevice.save()
+        for i in range(0, 20):
+            sensorData.objects.create(srNumber='1234', device=eachDevice, timeStamp=date,
+                                      temperature=str(random.randint(22, 26)), n=str(random.randint(12, 15)),
+                                      p=str(random.randint(25, 30)), k=str(random.randint(160, 165)))
+            print(date)
+            date -= datedelta.DAY
+
+
+
+
+
+
+CHARSET=utf8 COLLATE=utf8_general_ci;
+
+############## table with link #########################
+        $("#userTable tr").click(function () {
+            var rowId = $(this).attr('id');
+            if (rowId) {
+                $(this).addClass('selected').siblings().removeClass('selected');
+                $.ajax({
+                    url: '{% url "adminPanelAjax" %}',
+                    type: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'table': "user",
+                        'rowId': rowId,
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        alert(data)
+                    }
+                });
+            }
+        });
+        $("#farmTable tr").click(function () {
+            var rowId = $(this).attr('id');
+            if (rowId) {
+                $(this).addClass('selected').siblings().removeClass('selected');
+                alert(rowId);
+            }
+        });
+
+
+        $('.ok').on('click', function (e) {
+            alert($("#table tr.selected td:first").html());
+        });

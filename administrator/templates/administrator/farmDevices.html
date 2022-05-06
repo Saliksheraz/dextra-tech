@@ -1,0 +1,73 @@
+{% extends 'administrator/baseTemplate.html' %}
+{% load static %}
+{% block header %}Farm Devices{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">All Devices of Farm: {{farmObj.name}}</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table class="table" id="devicesTable">
+                <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Key</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Battery Status</th>
+                    <!-- <th scope="col">Image</th> -->
+                    <th scope="col">Sensors Data</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for each in allDevices %}
+                    <tr>
+                        <th>{{ each.name }}</th>
+                        <td>{{ each.key }}</td>
+                        <td>{{ each.type }}</td>
+                        <td>{{ each.createdAt }}</td>
+    
+                        <td>
+                            <div class="progress progress-xs">
+                              <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                            </div>
+                        </td>
+                        <!-- {% if each.picture %}
+                            <th><img src="{{ each.picture.url }}" width="100"></th>
+                        {% else %}
+                            <th>Not Found</th>
+                        {% endif %} -->
+                        
+                        {% if each.type == 'Hydroponics' %}
+                            <td><a class="btn btn-info"
+                                   href="/hydroponicSensors/{{ each.id }}">Sensors</a></td>
+                        {% else %}
+                            <td><a class="btn btn-info"
+                                   href="/deviceSensors/{{ each.id }}">Sensors</a></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.card -->
+    </div>
+    <!-- /.col -->
+  </div>
+{% endblock %}
+
+{% block extraScripts%}
+    <script>
+        $(function () {
+          $("#devicesTable").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+          }).buttons().container().appendTo('#devicesTable_wrapper .col-md-6:eq(0)');
+        });
+      </script>
+{% endblock %}

@@ -1,0 +1,209 @@
+{% extends 'administrator/baseTemplate.html' %}
+{% load static %}
+{% block navbar %}
+    <li class="breadcrumb-item">Admin Panel</li>
+{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+    {% if users %}
+        <div class="card" style="padding: 10px">
+            <div class="card-body">
+                <h5 class="card-title m-b-0">Users</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table" id="userTable">
+                    <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Gender</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>#</th>
+                        <th>#</th>
+                    </tr>
+                    </thead>
+                    {% for each in users %}
+                        <tr id="{{ each.id }}" style="border: 1px #DDD solid; padding: 5px;">
+                            <td>{{ each.username }}</td>
+                            <td>{{ each.profile.firstName }}</td>
+                            <td>{{ each.profile.secondName }}</td>
+                            <td>{{ each.profile.gender }}</td>
+                            <td>{{ each.profile.email }}</td>
+                            {% if each.is_active %}
+                                <td style="color: green">Active</td>
+                                <td>
+                                    <button type="button" class="btn btn-dark btn-sm"
+                                            onclick="adminPanelAjax({{ each.id }}, 'activation')">Deactivate
+                                    </button>
+                                </td>
+                            {% else %}
+                                <td style="color: orangered">In-active</td>
+                                <td>
+                                    <button type="button" class="btn btn-success btn-sm"
+                                            onclick="adminPanelAjax({{ each.id }}, 'activation')">Activate
+                                    </button>
+                                </td>
+                            {% endif %}
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="adminPanelAjax({{ each.id }}, 'delete')">Delete
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row">
+        {% if farms %}
+            <div class="col-md-6">
+                <div class="card" style="padding: 10px">
+                    <div class="card-body">
+                        <h5 class="card-title m-b-0">Farms</h5>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table" id="farmTable">
+                            <thead style="">
+                            <tr>
+                                <th>Name</th>
+                                <th>User</th>
+                                <th>Farm ID</th>
+                                <th>Location</th>
+                                <th>Picture</th>
+                                <th>#</th>
+                            </tr>
+                            </thead>
+                            {% for each in farms %}
+                                <tr id="{{ each.id }}" style="border: 1px #DDD solid; padding: 5px;">
+                                    <td>{{ each.name }}</td>
+                                    <td>{{ each.user }}</td>
+                                    <td>{{ each.farmId }}</td>
+                                    <td>{{ each.long }}</td>
+                                    <td></td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                onclick="adminPanelAjax({{ each.id }}, 'deleteFarm')">Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% if devices %}
+            <div class="col-md-6">
+                <div class="card" style="padding: 10px">
+                    <div class="card-body">
+                        <h5 class="card-title m-b-0">Devices</h5>
+
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table" id="devicesTable">
+                            <thead style="">
+                            <tr>
+                                <th>Name</th>
+                                <th>Farm</th>
+                                <th>Key</th>
+                                <th>Created</th>
+                                <th>Data Frequency</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            {% for each in devices %}
+                                <tr id="{{ each.id }}">
+                                    <td>{{ each.name }}</td>
+                                    <td>{{ each.farm }}</td>
+                                    <td>{{ each.key }}</td>
+                                    <td>{{ each.createdAt }}</td>
+                                    <td>{{ each.dataFrequency }}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm"
+                                                onclick="adminPanelAjax({{ each.id }}, 'deleteDevice')">Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+
+        function adminPanelAjax(id, call) {
+            Swal.fire({
+                title: 'Are you sure?',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes !!!'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: '{% url "adminPanelAjax" %}',
+                        type: 'POST',
+                        data: {
+                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                            'call': call,
+                            'id': id,
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.check) {
+                                location.reload();
+                            }
+                        }
+                    });
+                } else {
+                    return false;
+                }
+            });
+
+        }
+
+        $(document).ready(function () {
+
+
+            $('#userTable').DataTable({
+                dom: 'Bfrtip',
+                lengthMenu: [
+                    [10, 25, 50],
+                    ['10 rows', '25 rows', '50 rows']
+                ],
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print', 'pageLength'
+                ]
+            });
+            $('#farmTable').DataTable({
+                dom: 'Bfrtip',
+                lengthMenu: [
+                    [10, 25, 50],
+                    ['10 rows', '25 rows', '50 rows']
+                ],
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print', 'pageLength'
+                ]
+            });
+            $('#devicesTable').DataTable({
+                dom: 'Bfrtip',
+                lengthMenu: [
+                    [10, 25, 50],
+                    ['10 rows', '25 rows', '50 rows']
+                ],
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print', 'pageLength'
+                ]
+            });
+        });
+
+
+    </script>
+{% endblock %}
+

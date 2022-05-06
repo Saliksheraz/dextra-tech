@@ -1,0 +1,245 @@
+{% extends 'administrator/baseTemplate.html' %}
+{% load static %}
+{% block navbar %}
+    <li class="breadcrumb-item">Add Device</li>
+{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container">
+        <form class="form-horizontal form_middle" id="registerForm" enctype='multipart/form-data' method="POST">
+            {% csrf_token %}
+            <div class="main-body">
+                <div class="row gutters-sm">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex flex-column align-items-center text-center">
+                                    <img src="{% static 'images/avatarProfile.png' %}" alt="Admin"
+                                         class="rounded-circle" width="150" height="140"id="image">
+                                    <div class="container"
+                                         style="margin-top: 10px;margin-left: 20px"><input type="file" name="picture"
+                                                                                           accept="image/*"
+                                                                                           id="id_picture"
+                                                                                           onchange='changeImage(this);'>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h4 id="sideUsername">{{ userObj }}</h4>
+                                        <p class="text-secondary mb-1" id="sideEmail">{{ userObj.email }}</p>
+                                        <p class="text-muted font-size-sm"
+                                           id="sideAddress">{{ userObj.profile.address }}</p>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-3">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round" class="feather feather-globe mr-2 icon-inline">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                        </svg>
+                                        <span style="color: red">{{ form.website.errors }}</span>
+                                        Website
+                                    </h6>
+                                    <input class="form-side-control" value="" name="website" id="id_website"
+                                           type="text" maxlength="50"></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="feather feather-instagram mr-2 icon-inline text-danger">
+                                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                        </svg>
+                                        <span style="color: red">{{ form.insta.errors }}</span>
+                                        Instagram
+                                    </h6>
+                                    <input class="form-side-control" value="" name="insta" id="id_insta"
+
+                                           type="text" maxlength="50"></li>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <h6 class="mb-0">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                             viewBox="0 0 24 24"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             class="feather feather-facebook mr-2 icon-inline text-primary">
+                                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                                        </svg>
+                                        <span style="color: red">{{ form.facebook.errors }}</span>
+                                        Facebook
+                                    </h6>
+                                    <input class="form-side-control" value="" name="facebook" id="id_facebook"
+
+                                           type="text" maxlength="50"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.username.errors }}</span>
+                                        <h6 class="mb-0">Username*</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <input class="form-control" name="username" id="id_username"
+                                               required
+                                               type="text" size="40" maxlength="50"></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.password1.errors }}</span>
+                                        <h6 class="mb-0">Password*</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <input class="form-control" value="" name="password1" id="id_password1"
+                                               required
+                                               type="password" size="40" maxlength="50">
+                                        <ul>
+                                            <li>Your password can’t be too similar to your other personal information.
+                                            </li>
+                                            <li>Your password must contain at least 8 characters.</li>
+                                            <li>Your password can’t be a commonly used password.</li>
+                                            <li>Your password can’t be entirely numeric.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.password2.errors }}</span>
+                                        <h6 class="mb-0">Confirm Password*</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <input class="form-control" value="" name="password2" id="id_password2"
+                                               required
+                                               type="password" size="40" maxlength="50">
+                                        <p id="hint_id_password2" class="help-block">Enter the same password as before,
+                                            for
+                                            verification.</p></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.firstName.errors }}</span>
+                                        <h6 class="mb-0">First Name*</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <input class="form-control" value="" name="firstName" id="id_firstName"
+                                               required
+                                               type="text" size="40" maxlength="50"></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.secondName.errors }}</span>
+                                        <h6 class="mb-0">Last Name*</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <input class="form-control" value="" name="secondName" id="id_secondName"
+                                               required
+                                               type="text" size="40" maxlength="50"></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.gender.errors }}</span>
+                                        <h6 class="mb-0">Gender*</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <select class="form-control" id="id_user" name="{{ form.gender.name }}">
+                                            {% for choice in form.gender.field.choices %}
+                                                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                            {% endfor %}
+                                        </select></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.email.errors }}</span>
+                                        <h6 class="mb-0">Email*</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <input class="form-control" value="" name="email" id="id_email"
+                                               required
+                                               type="email" size="40" maxlength="50">
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.mobile.errors }}</span>
+                                        <h6 class="mb-0">Mobile Number*</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <input class="form-control" value="" name="mobile" id="id_mobile"
+                                               required
+                                               type="text" size="40" maxlength="50"></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.phone.errors }}</span>
+                                        <h6 class="mb-0">Phone</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <input class="form-control" value="" name="phone" id="id_phone"
+                                               type="text" size="40" maxlength="50"></div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <span style="color: red">{{ form.address.errors }}</span>
+                                        <h6 class="mb-0">Address*</h6>
+                                    </div>
+                                    <div class="col-sm-8 text-secondary">
+                                        <input class="form-control" value="" name="address" id="id_address"
+                                               required
+                                               type="text" size="40" maxlength="50"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <button class="btn btn-lg btn-success pull-right" type="submit">Submit
+                            </button>
+                            <button class="btn btn-lg btn-info pull-right" type="button"
+                                    onclick="if(confirm('Are you sure?')) $('#registerForm').trigger('reset')"> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#image').attr('src', e.target.result);
+                };
+
+                reader.readAsDataURL(input.files[0]); // convert to base64 string
+            }
+        }
+
+        $("#id_picture").change(function () {
+            readURL(this);
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'administrator/baseTemplate.html' %}
+{% block content %}
+    <div class="wrapper">
+        <div class="border-top pt-3" style="margin-left: 5%; margin-bottom: 40%">
+            <h2>You have been logged out</h2>
+            <a href="{% url 'login' %}">Log In Again?</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,348 @@
+{% extends 'administrator/baseTemplate.html' %}
+{% load static %}
+{% block headerbar %}
+    <h4 class="page-title">Dashboard</h4>
+{% endblock %}
+{% block content %}
+    <!-- Chart-1 -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Temperature</h5>
+                    <div id="tempChart" style="height: 400px; padding: 0px; position: relative;">
+                    </div>
+                    <button class="btn btn-success" type="button" onclick="toLineTemp();" style="margin-left: 2%">
+                        Line
+                    </button>
+                    <button class="btn btn-primary" type="button" onclick="toBarTemp();">Bar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Nitrogen</h5>
+                    <div id="nChart" style="height: 250px;"></div>
+                    <button class="btn btn-success" type="button" onclick="toLineN();" style="margin-left: 5%">Line
+                    </button>
+                    <button class="btn btn-primary" type="button" onclick="toBarN();">Bar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Phosphorus</h5>
+                    <div id="pChart" style="height: 250px;"></div>
+                    <button class="btn btn-success" type="button" onclick="toLineP();" style="margin-left: 5%">Line
+                    </button>
+                    <button class="btn btn-primary" type="button" onclick="toBarP();">Bar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Potassium</h5>
+                    <div id="kChart" style="height: 250px;"></div>
+                    <button class="btn btn-success" type="button" onclick="toLineK();" style="margin-left: 5%">Line
+                    </button>
+                    <button class="btn btn-primary" type="button" onclick="toBarK();">Bar</button>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Comparision</h5>
+                    <div id="donut" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Soil Moisture</h5>
+                    <div id="soilMoisture" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Humidity</h5>
+                    <div id="humidity" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card" style="padding: 20px">
+                <div class="card-body">
+                        <span>
+                        <h5 class="card-title m-b-0">Table</h5>
+                        </span>
+                </div>
+                <table class="table table-bordered" id="sensorDataTable">
+                    <thead>
+                    <tr>
+                        <th>SR no</th>
+                        <th>Time Stamp</th>
+                        <th>Temperature</th>
+                        <th>N</th>
+                        <th>P</th>
+                        <th>K</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for each in allSensorData %}
+                        <tr>
+                            <td>{{ each.srNumber }}</td>
+                            <td>{{ each.timeStamp }}</td>
+                            <td>{{ each.temperature }}</td>
+                            <td>{{ each.n }}</td>
+                            <td>{{ each.p }}</td>
+                            <td>{{ each.k }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#sensorDataTable').DataTable({
+                dom: 'Bfrtip',
+                lengthMenu: [
+                    [10, 25, 50],
+                    ['10 rows', '25 rows', '50 rows']
+                ],
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print', 'pageLength'
+                ]
+            });
+        });
+        new Morris.Line({
+            element: 'humidity',
+            data: [
+                {% for each in allSensorData %}
+                    {
+                        time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                        value: {{each.humidity}}
+                    },
+                {% endfor %}
+            ],
+            xkey: 'time',
+            ykeys: ['value'],
+            labels: ['Humidity'],
+            lineColors: ['#6e4ff5'],
+            ymax: 100,
+        });
+        new Morris.Line({
+            element: 'soilMoisture',
+            data: [
+                {% for each in allSensorData %}
+                    {
+                        time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                        value: {{each.soilMoisture}}
+                    },
+                {% endfor %}
+            ],
+            xkey: 'time',
+            ykeys: ['value'],
+            labels: ['Moisture'],
+            lineColors: ['#6e4ff5'],
+            ymax: 100,
+        });
+        Morris.Donut({
+            element: 'donut',
+            data: [
+                {value: {{ allSensorData.last.n}}, label: 'Nitrogen'},
+                {value: {{ allSensorData.last.p}}, label: 'Phosphorus'},
+                {value: {{ allSensorData.last.k}}, label: 'Potassium'},
+                {value: {{ allSensorData.last.soilMoisture}}, label: 'Soil Moisture'},
+            ],
+            colors: [
+                'darkblue',
+                'green',
+                '#F5F000',
+                'red'
+            ],
+
+            formatter: function (x) {
+                return x + ""
+            }
+        }).on('click', function (i, row) {
+            console.log(i, row);
+        });
+
+
+        toLineTemp();
+        toLineN();
+        toLineP();
+        toLineK();
+
+        function toLineTemp() {
+            $("#tempChart").empty();
+            new Morris.Line({
+                element: 'tempChart',
+                data: [
+                    {% for each in allSensorData %}
+                        {
+                            time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                            temp: {{each.temperature}}
+                        },
+                    {% endfor %}
+                ],
+                xkey: 'time',
+                ykeys: ['temp'],
+                labels: ['Temperature'],
+                lineColors: ['#6e4ff5']
+            });
+        }
+
+        function toBarTemp() {
+            $("#tempChart").empty();
+            new Morris.Bar({
+                element: 'tempChart',
+                data: [
+                    {% for each in allSensorData %}
+                        {
+                            time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                            temp: {{each.temperature}}
+                        },
+                    {% endfor %}
+                ],
+                xkey: 'time',
+                ykeys: ['temp'],
+                labels: ['Temperature'],
+                lineColors: ['#6e4ff5']
+            });
+        }
+
+        function toLineN() {
+            $("#nChart").empty();
+            new Morris.Line({
+                element: 'nChart',
+                data: [
+                    {% for each in allSensorData %}
+                        {
+                            time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                            value: {{each.n}}
+                        },
+                    {% endfor %}
+                ],
+                xkey: 'time',
+                ykeys: ['value'],
+                labels: ['Nitrogen'],
+                lineColors: ['#6e4ff5']
+            });
+        }
+
+        function toBarN() {
+            $("#nChart").empty();
+            new Morris.Bar({
+                element: 'nChart',
+                data: [
+                    {% for each in allSensorData %}
+                        {
+                            time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                            value: {{each.n}}
+                        },
+                    {% endfor %}
+                ],
+                xkey: 'time',
+                ykeys: ['value'],
+                labels: ['Nitrogen'],
+                lineColors: ['#6e4ff5']
+            });
+        }
+
+        function toLineP() {
+            $("#pChart").empty();
+            new Morris.Line({
+                element: 'pChart',
+                data: [
+                    {% for each in allSensorData %}
+                        {
+                            time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                            value: {{each.p}}
+                        },
+                    {% endfor %}
+                ],
+                xkey: 'time',
+                ykeys: ['value'],
+                labels: ['Phosphorus'],
+                lineColors: ['#6e4ff5']
+            });
+        }
+
+        function toBarP() {
+            $("#pChart").empty();
+            new Morris.Bar({
+                element: 'pChart',
+                data: [
+                    {% for each in allSensorData %}
+                        {
+                            time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                            value: {{each.p}}
+                        },
+                    {% endfor %}
+                ],
+                xkey: 'time',
+                ykeys: ['value'],
+                labels: ['Phosphorus'],
+                lineColors: ['#6e4ff5']
+            });
+        }
+
+        function toLineK() {
+            $("#kChart").empty();
+            new Morris.Line({
+                element: 'kChart',
+                data: [
+                    {% for each in allSensorData %}
+                        {
+                            time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                            value: {{each.k}}
+                        },
+                    {% endfor %}
+                ],
+                xkey: 'time',
+                ykeys: ['value'],
+                labels: ['Potassium'],
+                lineColors: ['#6e4ff5']
+            });
+        }
+
+        function toBarK() {
+            $("#kChart").empty();
+            new Morris.Bar({
+                element: 'kChart',
+                data: [
+                    {% for each in allSensorData %}
+                        {
+                            time: "{{each.timeStamp.year}}-{{ each.timeStamp.month }}-{{ each.timeStamp.day }} {{ each.timeStamp.hour }}:{{ each.timeStamp.minute }}:{{ each.timeStamp.second }}",
+                            value: {{each.k}}
+                        },
+                    {% endfor %}
+                ],
+                xkey: 'time',
+                ykeys: ['value'],
+                labels: ['Potassium'],
+                lineColors: ['#6e4ff5']
+            });
+        }
+
+
+    </script>
+{% endblock %}
