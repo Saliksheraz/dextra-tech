@@ -5,13 +5,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dextra Tech</title>
+  <title>Destra Tech</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
 
   <link rel="stylesheet" href={% static 'adminLteTheme/css/adminlte.min.css' %}>
 
@@ -21,6 +21,9 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script  
   {% block head %}{% endblock %}
 </head>
 <!--
@@ -181,7 +184,7 @@
       <a href="{% url 'index'%}" class="brand-link">
         <img src="{% static 'adminLteTheme/img/AdminLTELogo.png'%}" alt="AdminLTE Logo"
           class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">Dextra Tech</span>
+        <span class="brand-text font-weight-light">Destra Tech</span>
       </a>
 
       <!-- Sidebar -->
@@ -214,10 +217,34 @@
             <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
             <li class="nav-item">
-              <a href="{% url 'index'%}" class="nav-link active">
+              <a href="{% url 'index'%}" {% if request.path == '/' %}class="nav-link active" {% else %} class="nav-link" {% endif %}>
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
                   Dashboard
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'index'%}" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                  Smart Racks
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'freezerWarehouse'%}" {% if request.path == '/freezerWarehouse/' %}class="nav-link active" {% else %} class="nav-link" {% endif %}>
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                  Freezers
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'index'%}" class="nav-link">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                  Power Meter
                 </p>
               </a>
             </li>
@@ -327,7 +354,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1 class="m-0">{% block header %}{% endblock %}</h1>
+              <h4 class="m-0">{% block header %}{% endblock %}</h4>
             </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -361,7 +388,7 @@
 
     <!-- Main Footer -->
     <footer class="main-footer">
-      <strong>Dextra Tech</a>.</strong>
+      <strong>Destra Tech</a>.</strong>
       All rights reserved.
       <div class="float-right d-none d-sm-inline-block">
         <b>Version</b> 1.0.0
@@ -370,10 +397,9 @@
   </div>
   <!-- ./wrapper -->
 
-  <script src="{% static 'adminLteTheme/js/pages/dashboard3.js'%}"></script>
+  {% comment %} <script src="{% static 'adminLteTheme/js/pages/dashboard3.js'%}"></script> {% endcomment %}
   <script src="{% static 'adminLteTheme/plugins/chart.js/Chart.min.js'%}"></script>
 
   {%block extraScripts %}{% endblock %}
 </body>
-
 </html>

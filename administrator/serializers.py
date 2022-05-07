@@ -1,8 +1,23 @@
 from rest_framework import serializers
-from .models import sensorData
+from .models import sensorData, FreezersData
 
 
-class sensorsDataSerializer(serializers.ModelSerializer):
+class FreezerDataSerializer(serializers.ModelSerializer):
+    datetime = serializers.SerializerMethodField()
+    change = serializers.SerializerMethodField()
+
     class Meta:
-        model = sensorData
-        exclude = ['id', 'device']
+        model = FreezersData
+        exclude = ["id", "device", "warehouse"]
+
+    def get_datetime(self, obj):
+        return obj.datetime.strftime("%m/%d/%Y, %H:%M:%S")
+
+    def get_change(self, obj):
+        try:
+            secondLastObj = FreezersData.objects.get(id=obj.id - 1)
+            change = obj.temp - secondLastObj.temp
+            return change
+        except:
+            return 0
+        

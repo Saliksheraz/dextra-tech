@@ -1,0 +1,303 @@
+{% extends 'administrator/baseTemplate.html' %}
+{% load static %}
+{% block header %}Devices Info{% endblock %}
+{% block pageHeader %}
+<li class="breadcrumb-item"><a href="#">Add New Device</a></li>
+{% endblock %}
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">Devices</h3>
+                        <div class="card-tools">
+                            <a href="#" class="btn btn-tool btn-sm">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            <a href="#" class="btn btn-tool btn-sm">
+                                <i class="fas fa-bars"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <div class="container">
+                            <table class="table table-striped table-valign-middle" id="devicesTable"
+                                style="padding: 5px">
+                                <thead>
+                                    <tr>
+                                        <th>Device Name</th>
+                                        <th>Device ID</th>
+                                        <th>Max Temp Limit</th>
+                                        <th>Current Temp</th>
+                                        <th>Last Seen</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for each in allData %}
+                                    <tr style="cursor:pointer" id="each.id">
+                                        <td>
+                                            {{each.name}}
+                                            <!-- <span class="badge bg-danger">NEW</span> -->
+                                        </td>
+                                        <td>{{each.deviceId}}</td>
+                                        <td>{{each.maxTempLimit}}</td>
+                                        <td id="currentTemp">{{each.lastTemp}}</td>
+                                        <td id="lastSeen">{{each.lastSeen}}</td>
+                                        {% comment %} <td>
+                                            <a href="#" class="btn btn-primary">
+                                                Devices
+                                            </a>
+                                        </td> {% endcomment %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-between">
+                            <h3 class="card-title">Sales</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <p class="d-flex flex-column">
+                                <span class="text-bold text-lg">$18,230.00</span>
+                                <span>Sales Over Time</span>
+                            </p>
+                            <p class="ml-auto d-flex flex-column text-right">
+                                <span class="text-danger" id="tempChange">
+                                </span>
+                                <span class="text-muted">Since last month</span>
+                            </p>
+                        </div>
+                        <!-- /.d-flex -->
+
+                        <div class="position-relative mb-4">
+                            <canvas id="sales-chart" height="200"></canvas>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-end">
+                            <span class="mr-2">
+                                <i class="fas fa-square text-primary"></i> This year
+                            </span>
+
+                            <span>
+                                <i class="fas fa-square text-gray"></i> Last year
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-between">
+                            <h3 class="card-title">Online Store Visitors</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <p class="d-flex flex-column">
+                                <span class="text-bold text-lg">820</span>
+                                <span>Visitors Over Time</span>
+                            </p>
+                            <p class="ml-auto d-flex flex-column text-right">
+                                <span class="text-success">
+                                    <i class="fas fa-arrow-up"></i> 12.5%
+                                </span>
+                                <span class="text-muted">Since last week</span>
+                            </p>
+                        </div>
+                        <!-- /.d-flex -->
+
+                        <div class="position-relative mb-4">
+                            <canvas id="visitors-chart" height="200"></canvas>
+                        </div>
+
+                        <div class="d-flex flex-row justify-content-end">
+                            <span class="mr-2">
+                                <i class="fas fa-square text-primary"></i> This Week
+                            </span>
+
+                            <span>
+                                <i class="fas fa-square text-gray"></i> Last Week
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</div>
+
+{% endblock %}
+
+{% block extraScripts %}
+<script>
+    $(document).ready(function () {
+        $('#devicesTable').DataTable();
+        setInterval(function () {
+            loadChart();
+        }, 5000);
+    });
+    function loadChart() {
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'freezerData' 1 %}",
+            // data: { start_date: yesterday, end_date: currentDate },
+            dataType: 'json',
+            success: function (data) {
+                const lastData = data[data.length - 1];
+                if (lastData.change > 0) {
+                    $('#tempChange').html(`<i class="fas fa-arrow-up"></i> +${lastData.change}%`).attr('class', 'text-danger');
+                } else {
+                    $('#tempChange').html(`<i class="fas fa-arrow-down"></i> ${lastData.change}%`).attr('class', 'text-success');
+                }
+                const datesArray = data.map((item) => item.datetime.toString());
+                const tempArray = data.map((item) => item.temp);
+                // const logArray = data.map((item) => item.log);
+                salesChart.data.labels = datesArray;
+                salesChart.data.datasets[0].data = tempArray;
+                // salesChart.data.datasets[1].data = logArray;
+                salesChart.update();
+            },
+            error: function (request, status, error) {
+                $.notify(request.responseJSON.message, "warn");
+            }
+        });
+    }
+    const ticksStyle = {
+        fontColor: '#495057',
+        fontStyle: 'bold'
+    };
+
+    const mode = 'index';
+    const intersect = true;
+
+    let salesChart = new Chart('sales-chart', {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [
+                {
+                    backgroundColor: '#007bff',
+                    borderColor: '#007bff',
+                    data: []
+                },
+                // {
+                //     backgroundColor: '#ced4da',
+                //     borderColor: '#ced4da',
+                //     data: []
+                // }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: mode,
+                intersect: intersect
+            },
+            hover: {
+                mode: mode,
+                intersect: intersect
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        display: true,
+                        lineWidth: '4px',
+                        color: 'rgba(0, 0, 0, .2)',
+                        zeroLineColor: 'transparent'
+                    },
+                    ticks: $.extend({
+                        beginAtZero: true,
+                        callback: function (value) {
+                            return value;
+                        }
+                    }, ticksStyle)
+                }],
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: ticksStyle
+                }]
+            }
+        }
+    });
+    loadChart();
+
+    var $visitorsChart = $('#visitors-chart');
+    // eslint-disable-next-line no-unused-vars
+    var visitorsChart = new Chart($visitorsChart, {
+        data: {
+            labels: ['18th', '20th', '22nd', '24th', '26th', '28th', '30th'],
+            datasets: [{
+                type: 'line',
+                data: [100, 120, 170, 167, 180, 177, 160],
+                backgroundColor: 'transparent',
+                borderColor: '#007bff',
+                pointBorderColor: '#007bff',
+                pointBackgroundColor: '#007bff',
+                fill: false
+            },
+            {
+                type: 'line',
+                data: [60, 80, 70, 67, 80, 77, 100],
+                backgroundColor: 'tansparent',
+                borderColor: '#ced4da',
+                pointBorderColor: '#ced4da',
+                pointBackgroundColor: '#ced4da',
+                fill: false
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: mode,
+                intersect: intersect
+            },
+            hover: {
+                mode: mode,
+                intersect: intersect
+            },
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    gridLines: {
+                        display: true,
+                        lineWidth: '4px',
+                        color: 'rgba(0, 0, 0, .2)',
+                        zeroLineColor: 'transparent'
+                    },
+                    ticks: $.extend({
+                        beginAtZero: true,
+                    }, ticksStyle)
+                }],
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        display: false
+                    },
+                    ticks: ticksStyle
+                }]
+            }
+        }
+    })
+
+</script>
+{% endblock %}

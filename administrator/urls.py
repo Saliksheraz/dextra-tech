@@ -1,11 +1,10 @@
 from django.urls import path
 from . import views, ajax, restAPIs
-from django.conf.urls import url
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    url(r'warehouse/', views.warehouse, name='warehouse'),
-
-    path('sensorData/<int:pk>/<int:items>/',
-         restAPIs.sensorsDataView.as_view()),
+    path("", views.index, name="index"),
+    path("freezerWarehouse/", views.freezerWarehouse, name="freezerWarehouse"),
+    path("freezerDevice/<int:pk>/", views.freezerDevice, name="freezerDevice"),
+    path(r"warehouse/", views.warehouse, name="warehouse"),
+    path("freezerData/<int:pk>/", restAPIs.freezerData, name="freezerData"),
 ]
