@@ -15,7 +15,7 @@ class FreezerDataSerializer(serializers.ModelSerializer):
 
     def get_change(self, obj):
         try:
-            secondLastObj = FreezersData.objects.get(id=obj.id - 1)
+            secondLastObj = FreezersData.objects.filter(device=obj.device).order_by('-id')[1]
             change = obj.temp - secondLastObj.temp
             return change
         except:

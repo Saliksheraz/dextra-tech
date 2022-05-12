@@ -1,0 +1,120 @@
+{% extends 'administrator/baseTemplate.html' %}
+{% load static %}
+{% block header %}Freezers{% endblock %}
+{% block pageHeader %}
+<li class="breadcrumb-item"><a href="#">Add New WareHouse</a></li>
+{% endblock %}
+{% block content %}
+<div class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">WareHouses </h3>
+                        <div class="card-tools">
+                            <a href="#" class="btn btn-tool btn-sm">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            <a href="#" class="btn btn-tool btn-sm">
+                                <i class="fas fa-bars"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <div class="container">
+                            <table class="table table-striped table-valign-middle" id="freezerWarehouseTable" style="padding: 5px">
+                                <thead>
+                                    <tr>
+                                        <th>WareHouse Name</th>
+                                        <th>WareHouseID</th>
+                                        <th>Max Temp Limit</th>
+                                        <th>Location</th>
+                                        <th>#</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for each in allFreezerWarehouses %}
+                                    <tr>
+                                        <td>{% if each.picture.url %}
+                                            <img src="{{each.picture.url}}" alt="" class="img-circle img-size-32 mr-2">
+                                                <!-- <span class="badge bg-danger">NEW</span> -->
+                                            {% endif %}
+                                            {{each.name}}
+                                        </td>
+                                        <td>{{each.warehouseId}}</td>
+                                        <td>{{each.maxTempLimit}}</td>
+                                        <td>{{each.location}}</td>
+                                        <td>
+                                            <a href="" class="btn btn-danger">
+                                                Delete
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header border-0">
+                        <h3 class="card-title">All Devices</h3>
+                        <div class="card-tools">
+                            <a href="#" class="btn btn-tool btn-sm">
+                                <i class="fas fa-download"></i>
+                            </a>
+                            <a href="#" class="btn btn-tool btn-sm">
+                                <i class="fas fa-bars"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <div class="container">
+                            <table class="table table-striped table-valign-middle" id="freezerDeviceTable" style="padding: 5px">
+                                <thead>
+                                    <tr>
+                                        <th>Device Name</th>
+                                        <th>Device ID</th>
+                                        <th>WareHouse</th>
+                                        <th>#</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for each in allFreezerDevices %}
+                                    <tr>
+                                        <td>
+                                            {{each.name}}
+                                        </td>
+                                        <td>{{each.deviceId}}</td>
+                                        <td>{{each.warehouse}}</td>
+                                        <td>
+                                            <a href="" class="btn btn-danger">
+                                                Delete
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</div>
+
+{% endblock %}
+
+{% block extraScripts %}
+<script>
+    $(document).ready(function () {
+        $('#freezerWarehouseTable').DataTable();
+        $('#freezerDeviceTable').DataTable();
+    });
+</script>
+{% endblock %}

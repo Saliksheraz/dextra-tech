@@ -2,15 +2,17 @@ import datetime
 import datedelta
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .models import FreezersData, sensorData, Warehouse, weatherStationData, FreezerWarehouse, FreezerDevice
+from .models import FreezersData, sensorData, Warehouse, weatherStationData, FreezerWarehouse, FreezerDevice, SmartRack
 from .forms import warehouseForm, freezerWarehouseForm, freezerDeviceForm
 from django.contrib import messages
-from django.contrib.auth.models import User
-from django.contrib.auth.models import User
 
 
 @login_required
 def index(request):
+    redirect("freezerWarehouse")
+    for each in SmartRack.objects.all():
+        each.warehouse.set([Warehouse.objects.first()])
+        each.save()
     allData = Warehouse.objects.none()
     if request.user.is_superuser:
         allData = Warehouse.objects.all()
@@ -51,8 +53,8 @@ def freezerDevice(request, pk):
     for each in allData:
         data = FreezersData.objects.filter(device_id=each.id).last()
         if data:
-            each.lastTemp = data.temp
-            each.lastSeen = data.datetime
+            each.temp = data.temp
+            each.datetime = data.datetime
     context = {"form": form, "allData": allData}
     return render(request, "administrator/freezerDevice.html", context)
 
@@ -70,3 +72,14 @@ def warehouse(request):
     form = warehouseForm()
     context = {"form": form}
     return render(request, "administrator/warehouse.html", context)
+
+
+################### admin panel ##############################
+@login_required
+def adminPanel(request):
+    allFreezerWarehouses = FreezerWarehouse.objects.all()
+    allFreezerDevices = FreezerDevice.objects.all()
+    allFreezersData = FreezersData.objects.all()
+
+    context = {"allFreezerWarehouses": allFreezerWarehouses, "allFreezerDevices": allFreezerDevices, "allFreezersData": allFreezersData}
+    return render(request, "administrator/adminPanel.html", context)

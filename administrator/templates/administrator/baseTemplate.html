@@ -249,10 +249,10 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="{% url 'warehouse' %}" class="nav-link">
-                <i class="nav-icon fas fa-th"></i>
+              <a href="{% url 'adminPanel'%}" {% if request.path == '/adminPanel/' %}class="nav-link active" {% else %} class="nav-link" {% endif %}>
+                <i class="nav-icon fas fa-edit"></i>
                 <p>
-                  Add WareHouse
+                  Admin Panel
                 </p>
               </a>
             </li>
@@ -302,14 +302,6 @@
                 </li>
 
               </ul>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-edit"></i>
-                <p>
-                  Admin Panel
-                </p>
-              </a>
             </li>
             <li class="nav-item">
               <a href="#" class="nav-link">
