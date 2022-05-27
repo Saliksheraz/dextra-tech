@@ -29,6 +29,8 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'freezers',
+    'smartracks',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,13 +77,13 @@ WSGI_APPLICATION = 'DestraTech.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "Destratech$default",
-        "USER": "Destratech",
-        "PASSWORD": "Ba510199994",
-        "HOST": "Destratech.mysql.pythonanywhere-services.com",
-        "PORT": "3306",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'dextratech',
+        'USER': 'root',
+        'PASSWORD': 'Mcszindabad3',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 

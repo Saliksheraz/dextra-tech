@@ -6,12 +6,13 @@ from django.contrib.auth import views as auth_views
 from users import views as user_views
 from django.conf import settings
 from users.views import profile
-from administrator import restAPIs
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r"", include("administrator.urls")),
+    path(r"freezers/", include("freezers.urls")),
+    path(r"smartracks/", include("smartracks.urls")),
     
     path(r'profile/', profile, name='profile'),
 

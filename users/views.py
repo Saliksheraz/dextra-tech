@@ -27,16 +27,19 @@ def register(request):
             picture = form.cleaned_data.get('picture')
 
             user = form.save()
-            user.is_active = False
-            user.save()
-            for eachPermission in all_permission:
-                user.user_permissions.add(eachPermission)
-            Profile.objects.create(user=user, phone=phone, address=address, gender=gender, picture=picture,
-                                   firstName=firstName, secondName=secondName, email=email,
-                                   mobile=mobile, website=website, insta=insta, facebook=facebook)
-            messages.success(request,
+            try:
+                user.is_active = False
+                user.save()
+                for eachPermission in all_permission:
+                    user.user_permissions.add(eachPermission)
+                Profile.objects.create(user=user, phone=phone, address=address, gender=gender, picture=picture,
+                                    firstName=firstName, secondName=secondName, email=email,
+                                    mobile=mobile, website=website, insta=insta, facebook=facebook)
+                messages.success(request,
                              f'Your Account is successfully created!!!, Please wait till you are authorized to LogIn')
-            return redirect('homePage')
+                return redirect('homePage')
+            except:
+                user.delete()
         else:
             print(form.errors)
     else:
