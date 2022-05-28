@@ -7,7 +7,7 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header border-0">
-                        <h3 class="card-title">WareHouse Details</h3>
+                        <h3 class="card-title">WareHouse Real Time Data</h3>
                         <div class="card-tools">
                             <a href="#" class="btn btn-tool btn-sm">
                                 <i class="fas fa-download"></i>
@@ -23,11 +23,10 @@
                                 <thead>
                                     <tr>
                                         <th>Compartment</th>
-                                        <th>BoxState (Cloud)</th>
-                                        <th>Code (Cloud)</th>
-                                        <th>BoxState (Real Time)</th>
-                                        <th>Code (Real Time)</th>
-                                        <th>Status</th>
+                                        <th>BoxState</th>
+                                        <th>Code</th>
+                                        <th>Compartment Status</th>
+                                        <th>Event Change Controller</th>
                                         <th>Manual Update</th>
                                     </tr>
                                 </thead>
@@ -37,13 +36,12 @@
                                         <td>{{each.compartment}}</td>
                                         <td>{{each.boxstate}}</td>
                                         <td>{{each.code}}</td>
-                                        <td>{{each.rtBoxstate}}</td>
-                                        <td>{{each.rtCode}}</td>
                                         <td>{% if each.status %} Active {% else %} In-Active {% endif %}</td>
+                                        <td>{% if each.statusEventController %} Active {% else %} In-Active {% endif %}</td>
                                         <td>
-                                            <a onclick="manualUpdate()" class="btn btn-info">
+                                            <button type="button" class="btn btn-info" onclick="tableSelect('{{each.compartment}}')">
                                                 Manual Update
-                                            </a>
+                                              </button>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -56,75 +54,89 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="manualUpdateModal" tabindex="-1" role="dialog" aria-labelledby="manualUpdateModalTitle"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="manualUpdateModalTitle">Award Fee/Scholarship</h5>
-            </div>
-            <form id="indFeeScholarshipForm">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div id="div_id_isFee" class="form-group">
-                                <label for="id_isFee" class=" requiredField">
-                                    Status<span class="asteriskField">*</span>
-                                </label>
-                                <div class=""> <select name="isFee" class="select form-control" id="id_isFee">
-                                        <option value="available">Available</option>
-                                        <option value="occupied">Occupied</option>
-                                        <option value="unlocked">Unlocked</option>  
-                                    </select>
-                                </div>
+<div class="modal fade" id="modal-lg">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="modalTitle"></h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form id="modalForm">
+            <div class="modal-body">
+                <div class="row">
+                    <input type="text" value="" id="id_compartment" name="compartment" hidden>
+                    <div class="col-md-6">
+                        <div id="div_id_status" class="form-group">
+                            <label for="id_status" class=" requiredField">
+                                Status<span class="asteriskField">*</span>
+                            </label>
+                            <div class=""> <select name="status" class="select form-control" id="id_status">
+                                    <option value="available">Available</option>
+                                    <option value="occupied">Occupied</option>
+                                    <option value="unlocked">Unlocked</option>  
+                                </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div id="div_id_isFee" class="form-group">
-                                <label for="id_isFee" class=" requiredField">
-                                    Side<span class="asteriskField">*</span>
-                                </label>
-                                <div class=""> <select name="isFee" class="select form-control" id="id_isFee">
-                                        <option value="picker">Picker</option>
-                                        <option value="rider">Rider</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div id="div_id_name" class="form-group">
-                                <label for="id_name" class=" requiredField">
-                                    Name<span class="asteriskField">*</span>
-                                </label>
-                                <div class="">
-                                    <input type="text" name="name" maxlength="50"
-                                        class="textinput textInput form-control" required="" id="id_name">
-                                </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="div_id_side" class="form-group">
+                            <label for="id_side" class=" requiredField">
+                                Side<span class="asteriskField">*</span>
+                            </label>
+                            <div class=""> <select name="side" class="select form-control" id="id_side">
+                                    <option value="picker">Picker</option>
+                                    <option value="rider">Rider</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success" form="indFeeScholarshipForm">Submit</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
+        </form>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" onclick="submitForm()">Save changes</button>
         </div>
+      </div>
     </div>
-</div>
-{% endblock %}
-
-{% block extraScripts %}
+  </div>
+  {% endblock %}
+  {%block extraScripts %}
 <script>
-    function manualUpdate(){
-    }
     $(document).ready(function () {
         $('#demoTable').DataTable({
             "pageLength": 50
         });
         setTimeout(function () {
             window.location.reload();
-        }, 10000);
+        }, 30000);
     });
+    function tableSelect(compartment){
+        $("#id_compartment").val(compartment);
+        $("#modalTitle").html("Update: "+compartment);
+        
+        $("#modal-lg").modal('show')
+    }
+    function submitForm(){
+        const serializedForm = $("#modalForm").serialize();
+        $.ajax({
+            url: window.location.href,
+            type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+            },
+            data: {
+                'serializedForm': serializedForm
+            },
+            success: function (data) {
+                window.location.reload()
+            },
+            error: function (data) {
+                alert("Request Failed")
+            }
+        });
+    }
 </script>
 {% endblock %}
