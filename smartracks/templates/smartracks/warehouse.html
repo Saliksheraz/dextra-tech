@@ -25,23 +25,29 @@
                                         <th>Compartment</th>
                                         <th>BoxState</th>
                                         <th>Code</th>
-                                        <th>Compartment Status</th>
-                                        <th>Event Change Controller</th>
+                                        <th>Display Board status</th>
+                                        <th>Relay Board status</th>
+                                        <th>Feedback Board status</th>
+                                        <th>Smart Enable</th>
                                         <th>Manual Update</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for each in cloudData %}
-                                    <tr {% if each.status %} style="color: green" {% else %} style="color: red" {% endif%}>
+                                    {% for each in allCompartments %}
+                                    <tr>
                                         <td>{{each.compartment}}</td>
                                         <td>{{each.boxstate}}</td>
                                         <td>{{each.code}}</td>
-                                        <td>{% if each.status %} Active {% else %} In-Active {% endif %}</td>
-                                        <td>{% if each.statusEventController %} Active {% else %} In-Active {% endif %}</td>
+                                        <td>{{each.livestatedisplay}}</td>
+                                        <td>{{each.livestaterelay}}</td>
+                                        <td>{{each.livestatefeedback}}</td>
+                                        <td>{{each.smartenable}}</td>
+                                        </td>
                                         <td>
-                                            <button type="button" class="btn btn-info" onclick="tableSelect('{{each.compartment}}')">
+                                            <button type="button" class="btn btn-info"
+                                                onclick="tableSelect('{{each.compartment}}')">
                                                 Manual Update
-                                              </button>
+                                            </button>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -56,54 +62,54 @@
 </div>
 <div class="modal fade" id="modal-lg">
     <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title" id="modalTitle"></h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form id="modalForm">
-            <div class="modal-body">
-                <div class="row">
-                    <input type="text" value="" id="id_compartment" name="compartment" hidden>
-                    <div class="col-md-6">
-                        <div id="div_id_status" class="form-group">
-                            <label for="id_status" class=" requiredField">
-                                Status<span class="asteriskField">*</span>
-                            </label>
-                            <div class=""> <select name="status" class="select form-control" id="id_status">
-                                    <option value="available">Available</option>
-                                    <option value="occupied">Occupied</option>
-                                    <option value="unlocked">Unlocked</option>  
-                                </select>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalTitle"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="modalForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <input type="text" value="" id="id_compartment" name="compartment" hidden>
+                        <div class="col-md-6">
+                            <div id="div_id_status" class="form-group">
+                                <label for="id_status" class=" requiredField">
+                                    Status<span class="asteriskField">*</span>
+                                </label>
+                                <div class=""> <select name="status" class="select form-control" id="id_status">
+                                        <option value="available">Available</option>
+                                        <option value="occupied">Occupied</option>
+                                        <option value="unlocked">Unlocked</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div id="div_id_side" class="form-group">
-                            <label for="id_side" class=" requiredField">
-                                Side<span class="asteriskField">*</span>
-                            </label>
-                            <div class=""> <select name="side" class="select form-control" id="id_side">
-                                    <option value="picker">Picker</option>
-                                    <option value="rider">Rider</option>
-                                </select>
+                        <div class="col-md-6">
+                            <div id="div_id_side" class="form-group">
+                                <label for="id_side" class=" requiredField">
+                                    Side<span class="asteriskField">*</span>
+                                </label>
+                                <div class=""> <select name="side" class="select form-control" id="id_side">
+                                        <option value="picker">Picker</option>
+                                        <option value="rider">Rider</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </form>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" onclick="submitForm()">Save changes</button>
             </div>
-        </form>
-        <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" onclick="submitForm()">Save changes</button>
         </div>
-      </div>
     </div>
-  </div>
-  {% endblock %}
-  {%block extraScripts %}
+</div>
+{% endblock %}
+{%block extraScripts %}
 <script>
     $(document).ready(function () {
         $('#demoTable').DataTable({
@@ -113,13 +119,13 @@
             window.location.reload();
         }, 30000);
     });
-    function tableSelect(compartment){
+    function tableSelect(compartment) {
         $("#id_compartment").val(compartment);
-        $("#modalTitle").html("Update: "+compartment);
-        
+        $("#modalTitle").html("Update: " + compartment);
+
         $("#modal-lg").modal('show')
     }
-    function submitForm(){
+    function submitForm() {
         const serializedForm = $("#modalForm").serialize();
         $.ajax({
             url: window.location.href,
