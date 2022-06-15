@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'DestraTech.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Destratech$default',
+        'NAME': 'Destratech$default2',
         'USER': 'Destratech',
         'PASSWORD': 'BadarWaqar123',
         'HOST': 'Destratech.mysql.pythonanywhere-services.com',
