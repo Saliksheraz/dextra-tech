@@ -16,12 +16,13 @@ def smartracks(request):
 
 @login_required
 def warehouse(request, pk):
+    warehouseObj = Warehouse.objects.get(id=pk)
     if request.method == "POST" and request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
         form_data = QueryDict(request.POST["serializedForm"].encode("ASCII"))
         url = "https://api.airliftgrocer.com/compartment/status"
 
         payload = json.dumps(
-            {"warehouseId": warehouse.warehouseId,
+            {"warehouseId": warehouseObj.warehouseId,
                 "rack": form_data["compartment"], "status": form_data["status"], "side": form_data["side"]}
         )
         headers = {"auth": "Groc3R@Sm@rtR@ck",
